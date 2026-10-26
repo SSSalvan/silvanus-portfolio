@@ -37,8 +37,8 @@ const chapters = [
   { id: "contact", glyph: "伍", label: "Contact" },
 ];
 const showcaseProjects = projects.slice(0, 9);
-// Temporary lightweight deployment: keep the project data, omit heavy media.
-const showProjectMedia = false;
+// Enable project media to display project images
+const showProjectMedia = true;
 
 function Index() {
   useReveal();
