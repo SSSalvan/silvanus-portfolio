@@ -104,9 +104,15 @@ export const publications = [
 ];
 
 export const experience = [
-  { when: "Jun 2026 — Present", org: "Dekostel Management", role: "Data Entry & User Testing", desc: "Built Python scripts and browser automation workflows to reduce repetitive manual entry; tested automated systems and validated data integrity." },
-  { when: "Jun 2022 — Aug 2024", org: "PT Karya Satria", role: "Office Administrator", desc: "Managed proposals, work orders, procurement, and project budgets full-time through June 2023, then continued part-time until August 2024." },
+  { when: "Jun 2026 to Present", org: "Dekostel Management", role: "Data Entry & User Testing", desc: "Built Python scripts and browser automation workflows to reduce repetitive manual entry; tested automated systems and validated data integrity." },
+  { when: "Jun 2022 to Aug 2024", org: "PT Karya Satria", role: "Office Administrator", desc: "Managed proposals, work orders, procurement, and project budgets full-time through June 2023, then continued part-time until August 2024." },
 ];
+
+// The showreel is content too: components only render it.
+export const reel = {
+  src: asset("/reel/porto.mp4"),
+  poster: asset("/reel/porto-poster.jpg"),
+};
 
 export const contact = {
   email: "silvanusalvan41@gmail.com",

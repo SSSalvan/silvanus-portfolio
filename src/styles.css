@@ -216,6 +216,49 @@
   /* scroll edges (hanging scroll rods) */
   .scroll-rod { height: 10px; background: linear-gradient(180deg, var(--paper-ink), oklch(0.3 0.01 165), var(--paper-ink)); border-radius: 6px; }
 
+  /* cloud header — one soft band with a scalloped cloud edge instead of a box */
+  .cloud-nav {
+    --puff: 34px;
+    --cloud-lobe: radial-gradient(50% 100% at 50% 0, #000 99%, transparent 100%);
+    padding-bottom: var(--puff);
+    background: color-mix(in oklab, var(--background) 72%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    -webkit-mask-image: linear-gradient(#000 0 0), var(--cloud-lobe), var(--cloud-lobe);
+    mask-image: linear-gradient(#000 0 0), var(--cloud-lobe), var(--cloud-lobe);
+    -webkit-mask-repeat: no-repeat, repeat-x, repeat-x;
+    mask-repeat: no-repeat, repeat-x, repeat-x;
+    -webkit-mask-size: 100% calc(100% - var(--puff)), 116px var(--puff), 116px 22px;
+    mask-size: 100% calc(100% - var(--puff)), 116px var(--puff), 116px 22px;
+    -webkit-mask-position: top left, left bottom, -58px bottom;
+    mask-position: top left, left bottom, -58px bottom;
+  }
+  .cloud-nav.is-scrolled { background: color-mix(in oklab, var(--background) 96%, transparent); }
+
+  /* dragon — drops out of the cloud header once, then rests as a static background */
+  .dragon-descent {
+    --dragon-op: .38;
+    position: absolute; top: 0; bottom: 0; right: -8%;
+    width: min(86vw, 34rem);
+    z-index: 0; pointer-events: none;
+    opacity: var(--dragon-op);
+    mix-blend-mode: lighten;
+    -webkit-mask-image: radial-gradient(78% 72% at 58% 34%, #000 42%, transparent 92%);
+    mask-image: radial-gradient(78% 72% at 58% 34%, #000 42%, transparent 92%);
+  }
+  .dragon-fall { width: 100%; height: 100%; }
+  .dragon-fall img { width: 100%; height: 100%; object-fit: cover; object-position: 55% top;
+    filter: invert(1) hue-rotate(180deg); }
+  @media (min-width: 768px) {
+    .dragon-descent { --dragon-op: .55; right: -4%; width: min(54vw, 44rem); }
+  }
+  html.dragon-on .dragon-fall { will-change: transform, opacity;
+    animation: dragon-drop 1.25s var(--ease-ink) 1.85s both; }
+  @keyframes dragon-drop {
+    from { opacity: 0; transform: translate3d(0, -105%, 0); }
+    to { opacity: 1; transform: none; }
+  }
+
   /* intro slash */
   .slash-intro { display: none; }
   html.slash-on .slash-intro { display: block; position: fixed; inset: 0; z-index: 100; pointer-events: none; }

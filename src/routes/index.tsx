@@ -12,6 +12,7 @@ import {
   projects,
   projectMedia,
   publications,
+  reel,
   type Category,
 } from "@/content/portfolio";
 import { useReveal, useActiveSection } from "@/hooks/use-reveal";
@@ -19,9 +20,9 @@ import { useReveal, useActiveSection } from "@/hooks/use-reveal";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Silvanus Alvan — Machine Learning Engineer" },
+      { title: "Silvanus Alvan · Machine Learning Engineer" },
       { name: "description", content: "Silvanus Alvan builds machine learning systems that work: computer vision, Indonesian NLP, and 3D reconstruction research turned into real software." },
-      { property: "og:title", content: "Silvanus Alvan — Machine Learning Engineer" },
+      { property: "og:title", content: "Silvanus Alvan · Machine Learning Engineer" },
       { property: "og:description", content: "Research-minded engineering across computer vision, language systems and 3D. Selected work, publications and contact." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -54,6 +55,7 @@ function Index() {
       <Rail active={active} />
       <main id="main">
         <Hero />
+        <Reel />
         <Strip />
         <Work />
         <Research />
@@ -71,14 +73,24 @@ function Intro() {
   useEffect(() => {
     const root = document.documentElement;
     if (!root.classList.contains("slash-on")) return;
-    const t = window.setTimeout(() => {
-      root.classList.remove("slash-on");
-      try { sessionStorage.setItem("slash-seen", "1"); } catch { /* private mode */ }
-    }, 2250);
-    const skip = () => { window.clearTimeout(t); root.classList.remove("slash-on"); try { sessionStorage.setItem("slash-seen", "1"); } catch { /* noop */ } };
+    // `dragon-on` runs the one-shot descent from the cloud header; it is dropped once the
+    // dragon has landed so the element falls back to its static background state.
+    root.classList.add("dragon-on");
+    let revealed = false;
+    const markSeen = () => { try { sessionStorage.setItem("slash-seen", "1"); } catch { /* private mode */ } };
+    const reveal = () => { if (revealed) return; revealed = true; window.dispatchEvent(new Event("intro:done")); };
+    const finish = () => { root.classList.remove("slash-on"); root.classList.remove("dragon-on"); markSeen(); reveal(); };
+    const openT = window.setTimeout(() => root.classList.remove("slash-on"), 2250);
+    const revealT = window.setTimeout(reveal, 2750);
+    const restT = window.setTimeout(finish, 3150);
+    const skip = () => { [openT, revealT, restT].forEach((id) => window.clearTimeout(id)); finish(); };
     window.addEventListener("keydown", skip, { once: true });
     window.addEventListener("pointerdown", skip, { once: true });
-    return () => { window.clearTimeout(t); window.removeEventListener("keydown", skip); window.removeEventListener("pointerdown", skip); };
+    return () => {
+      [openT, revealT, restT].forEach((id) => window.clearTimeout(id));
+      window.removeEventListener("keydown", skip);
+      window.removeEventListener("pointerdown", skip);
+    };
   }, []);
   return (
     <div className="slash-intro" aria-hidden="true">
@@ -106,7 +118,7 @@ function Nav() {
     ["#about", "About"],
   ];
   return (
-    <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-700 ${scrolled ? "bg-background/80 backdrop-blur-md border-b border-border" : ""}`}>
+    <header className={`cloud-nav fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-700 ${scrolled ? "is-scrolled" : ""}`}>
       <nav className="mx-auto flex max-w-[1500px] items-center justify-between px-5 py-4 md:px-10" aria-label="Primary">
         <a href="#top" className="flex items-center gap-3" aria-label="Silvanus Alvan home">
           <span className="seal h-9 w-9 text-lg">銀</span>
@@ -122,7 +134,7 @@ function Nav() {
           {open ? "Close" : "Menu"}
         </button>
       </nav>
-      <div id="mnav" className={`md:hidden overflow-hidden border-border bg-background transition-[max-height] duration-700 ${open ? "max-h-80 border-b" : "max-h-0"}`}>
+      <div id="mnav" className={`md:hidden overflow-hidden border-border bg-background transition-[max-height] duration-700 ${open ? "max-h-80" : "max-h-0"}`}>
         <div className="flex flex-col gap-1 px-5 pb-6">
           {[...links, ["#contact", "Contact"]].map(([h, l]) => (
             <a key={h} href={h} onClick={() => setOpen(false)} className="display py-2 text-4xl">{l}</a>
@@ -151,8 +163,11 @@ function Hero() {
   const [ready, setReady] = useState(false);
   const imgRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const delay = document.documentElement.classList.contains("slash-on") ? 1500 : 80;
-    const t = setTimeout(() => setReady(true), delay);
+    // On a first visit the copy waits for the dragon to land (`intro:done`).
+    const introPlaying = document.documentElement.classList.contains("slash-on");
+    const onIntroDone = () => setReady(true);
+    const t = introPlaying ? 0 : window.setTimeout(() => setReady(true), 80);
+    if (introPlaying) window.addEventListener("intro:done", onIntroDone, { once: true });
     let raf = 0;
     const on = () => {
       cancelAnimationFrame(raf);
@@ -162,7 +177,12 @@ function Hero() {
       });
     };
     window.addEventListener("scroll", on, { passive: true });
-    return () => { clearTimeout(t); window.removeEventListener("scroll", on); cancelAnimationFrame(raf); };
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("intro:done", onIntroDone);
+      window.removeEventListener("scroll", on);
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
   return (
@@ -173,6 +193,11 @@ function Hero() {
       <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background to-transparent" />
       <div className="mist" /><div className="mist b" />
+      <div className="dragon-descent" aria-hidden="true">
+        <div className="dragon-fall">
+          <img src={dragonImg} alt="" width={1024} height={1536} />
+        </div>
+      </div>
 
       <div className="relative z-10 mx-auto flex w-full max-w-[1500px] flex-1 flex-col justify-end px-5 pb-10 pt-32 md:px-10 xl:pl-24">
         <p className={`label mb-8 flex items-center gap-3 text-jade transition-opacity duration-1000 ${ready ? "opacity-100" : "opacity-0"}`}>
@@ -220,6 +245,58 @@ function Hero() {
   );
 }
 
+/* ───────── Showreel ───────── */
+function Reel() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // It starts when the reel reaches your eyes and pauses when you scroll past,
+  // the way a video behaves when it is simply playing in the room.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) video.play().catch(() => {});
+        else video.pause();
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(video);
+    return () => {
+      io.disconnect();
+      video.pause();
+    };
+  }, []);
+
+  return (
+    <section id="reel" className="border-b border-border py-16 md:py-24">
+      <div className="mx-auto max-w-[1500px] px-5 md:px-10 xl:pl-24">
+        <div className="reveal mb-6 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
+          <p className="label flex items-center gap-4 text-jade">
+            <span className="brush text-2xl">映</span>Showreel · Selected works 2026
+          </p>
+          <p className="label text-muted-foreground">Twelve projects · 2:40</p>
+        </div>
+        <div className="plate reveal">
+          <video
+            ref={videoRef}
+            className="block aspect-video w-full"
+            src={reel.src}
+            poster={reel.poster}
+            controls
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            aria-label="Portfolio showreel: selected works 2026"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Strip() {
   return (
     <section className="relative border-y border-border py-24 md:py-36">
@@ -261,7 +338,7 @@ function Work() {
   return (
     <section id="work" className="relative py-28 md:py-40">
       <div className="mx-auto max-w-[1500px] px-5 md:px-10 xl:pl-24">
-        <SectionHead chapter="Chapter I — Selected works" glyph="貳" title="Selected" em="work." aside="A field notebook of research, products, coursework, and experiments — from thesis-grade 3D vision to software in daily use." />
+        <SectionHead chapter="Chapter I · Selected works" glyph="貳" title="Selected" em="work." aside="A field notebook of research, products, coursework, and experiments, from thesis-grade 3D vision to software in daily use." />
 
         <div className="sticky top-[68px] z-30 -mx-5 mb-14 flex flex-wrap items-center gap-2 bg-background/85 px-5 py-4 backdrop-blur-md md:-mx-10 md:px-10" role="group" aria-label="Filter projects by discipline">
           {categories.map((c) => (
@@ -279,7 +356,7 @@ function Work() {
                 {showProjectMedia && projectMedia[p.title] && <img className="project-image" src={projectMedia[p.title].image} alt={`${p.title} project capture`} loading={i === 0 ? "eager" : "lazy"} />}
                 <span className="plate-glyph" aria-hidden="true">{glyphFor(p.cat)}</span>
                 <div className="flex items-start justify-between">
-                  <span className="label text-jade">{num(p.title)} — {p.kicker}</span>
+                  <span className="label text-jade">{num(p.title)} · {p.kicker}</span>
                   <span className="seal h-7 w-7 text-xs" aria-hidden="true">{glyphFor(p.cat)}</span>
                 </div>
                 <div className="relative max-w-2xl">
@@ -298,7 +375,7 @@ function Work() {
 
         {rest.length > 0 && (
           <div>
-            <p className="label mb-6 text-muted-foreground">The archive — {rest.length} entries</p>
+            <p className="label mb-6 text-muted-foreground">The archive · {rest.length} entries</p>
             <ol className="border-b border-border">
               {rest.map((p) => (
                 <li key={p.title} className="ledger-row group" tabIndex={-1}>
@@ -341,7 +418,7 @@ function Research() {
       <img src={dragonImg} alt="" width={1024} height={1536} loading="lazy" className="pointer-events-none absolute -right-24 top-0 h-full w-auto max-w-none opacity-40 mix-blend-multiply [mask-image:linear-gradient(90deg,transparent,black_35%)] md:right-0 md:opacity-70" />
       <div className="relative z-10 mx-auto max-w-[1500px] px-5 md:px-10 xl:pl-24">
         <div className="reveal mb-16 max-w-3xl">
-          <p className="label mb-6 flex items-center gap-4 text-jade-deep"><span className="brush text-2xl">參</span>Chapter II — Research</p>
+          <p className="label mb-6 flex items-center gap-4 text-jade-deep"><span className="brush text-2xl">參</span>Chapter II · Research</p>
           <h2 className="display text-[clamp(3rem,8vw,7.5rem)]">Research I'm <em className="text-jade-deep">working on.</em></h2>
           <p className="mt-8 max-w-xl text-lg leading-relaxed text-paper-muted">I work on computer vision and NLP. Recent projects build 3D scene geometry from model outputs, and make long Indonesian lecture recordings easier to search.</p>
         </div>
@@ -371,7 +448,7 @@ function About() {
   return (
     <section id="about" className="relative py-28 md:py-40">
       <div className="mx-auto max-w-[1500px] px-5 md:px-10 xl:pl-24">
-        <SectionHead chapter="Chapter III — About me" glyph="肆" title="About me," em="in short." />
+        <SectionHead chapter="Chapter III · About me" glyph="肆" title="About me," em="in short." />
         <div className="grid gap-16 md:grid-cols-[1.3fr_1fr]">
           <div className="space-y-6 text-lg leading-relaxed text-muted-foreground">
             <p className="reveal display text-[clamp(1.7rem,2.6vw,2.4rem)] leading-snug text-foreground">I'm a seventh-semester Informatics student at Universitas Pelita Harapan, studying Data Science and working toward a career in machine learning engineering.</p>
@@ -381,7 +458,7 @@ function About() {
           <dl className="reveal self-start border-t border-border" style={{ "--d": "150ms" } as CSSProperties}>
             <figure className="reveal portrait mb-8" style={{ "--d": "80ms" } as CSSProperties}>
               <img src={profileImg} alt="Portrait of Silvanus Alvan" width={1200} height={1200} loading="lazy" />
-              <figcaption className="label mt-3 px-1 text-muted-foreground">Silvanus Alvan — Tangerang, Indonesia</figcaption>
+              <figcaption className="label mt-3 px-1 text-muted-foreground">Silvanus Alvan · Tangerang, Indonesia</figcaption>
             </figure>
             {[
               ["Education", "Universitas Pelita Harapan", "B.CompSc, Data Science"],
@@ -406,7 +483,7 @@ function Experience() {
   return (
     <section className="relative border-t border-border py-28 md:py-36">
       <div className="mx-auto max-w-[1500px] px-5 md:px-10 xl:pl-24">
-        <SectionHead chapter="Chapter IV — Work experience" glyph="道" title="Where I've" em="worked." aside="A couple of jobs where I used my technical and analytical skills." />
+        <SectionHead chapter="Chapter IV · Work experience" glyph="道" title="Where I've" em="worked." aside="A couple of jobs where I used my technical and analytical skills." />
         <ol>
           {experience.map((e, i) => (
             <li key={e.org} className="reveal grid gap-4 border-t border-border py-10 md:grid-cols-[14rem_1fr_1.3fr] md:gap-10" style={{ "--d": `${i * 120}ms` } as CSSProperties}>
@@ -428,7 +505,7 @@ function Contact() {
       <div className="mist" />
       <span aria-hidden="true" className="brush pointer-events-none absolute -right-10 top-1/2 -translate-y-1/2 text-[38vw] leading-none text-foreground/[0.03]">終</span>
       <div className="relative mx-auto max-w-[1500px] px-5 md:px-10 xl:pl-24">
-        <p className="reveal label mb-8 flex items-center gap-4 text-jade"><span className="brush text-2xl">伍</span>Last chapter — Let's talk</p>
+        <p className="reveal label mb-8 flex items-center gap-4 text-jade"><span className="brush text-2xl">伍</span>Last chapter · Let's talk</p>
         <h2 className="reveal display text-[clamp(3.5rem,12vw,12rem)]">Let's make<br />something <em className="text-jade">good.</em></h2>
         <div className="reveal mt-14 grid gap-10 md:grid-cols-[1fr_auto] md:items-end" style={{ "--d": "200ms" } as CSSProperties}>
           <p className="max-w-md text-lg leading-relaxed text-muted-foreground">Open to machine learning jobs, research work, and interesting technical projects.</p>

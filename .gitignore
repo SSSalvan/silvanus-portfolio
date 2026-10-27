@@ -20,8 +20,11 @@ dist-ssr
 .wrangler/
 .dev.vars
 
-# Project showcase media (likely generated/demo assets; keep out of git)
-public/projects/
+# Project showcase media: raw captures stay out of git, only each project's
+# curated show image ships with the site.
+public/projects/*
+!public/projects/*/
+!public/projects/*/show.png
 
 # Editor directories and files
 .vscode/*
