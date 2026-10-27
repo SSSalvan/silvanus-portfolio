@@ -56,8 +56,12 @@ export const projects: Project[] = [
   { cat: "product", kicker: "Product, Vision system", title: "PKM Gereja", desc: "Church management system: FastAPI backend, React front end and a YOLOv8n + ByteTrack pipeline that records attendance straight from camera video.", tags: ["YOLOv8", "ByteTrack", "FastAPI"] },
 ];
 
+// Content paths are written root-absolute; resolve them against the build base so they
+// keep working when the site is served from a subpath (GitHub Pages project URLs).
+const asset = (path: string) => `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
+
 // Captures and films carried over from the original portfolio archive.
-export const projectMedia: Record<string, ProjectMedia> = {
+const projectMediaRaw: Record<string, ProjectMedia> = {
   "SDF-GS Refine": { image: "/projects/sdf-gs-refine-thesis/show.png" },
   "Lane Detection Experiments": { image: "/projects/lane-detection-experiments/show.png", film: "/projects/lane-detection-experiments/brag.mp4", poster: "/projects/lane-detection-experiments/brag.jpg" },
   "CatatIN (IndoBERT)": { image: "/projects/indobert-nlp-text-rank/show.png" },
@@ -83,6 +87,17 @@ export const projectMedia: Record<string, ProjectMedia> = {
   "KeytoHatch": { image: "/projects/keytohatch/show.png" },
 };
 
+export const projectMedia: Record<string, ProjectMedia> = Object.fromEntries(
+  Object.entries(projectMediaRaw).map(([title, media]) => [
+    title,
+    {
+      image: asset(media.image),
+      ...(media.film ? { film: asset(media.film) } : {}),
+      ...(media.poster ? { poster: asset(media.poster) } : {}),
+    },
+  ]),
+);
+
 export const publications = [
   { year: "2026", venue: "ICTIIA", title: "IndoBERT-Based Extractive Summarization with K-Means Clustering and TextRank Re-ranking for Indonesian Academic Lecture Transcripts" },
   { year: "2026", venue: "IC2IE", title: "Latent Diffusion for Cross-Lingual Syntax Transfer in Distant Language Pairs" },
@@ -96,7 +111,7 @@ export const experience = [
 export const contact = {
   email: "silvanusalvan41@gmail.com",
   github: "https://github.com/SSSalvan",
-  resume: "/resume.pdf",
+  resume: asset("/resume.pdf"),
 };
 
 export function filterProjects(list: Project[], cat: "all" | Category) {
