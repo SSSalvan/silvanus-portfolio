@@ -196,6 +196,15 @@
   .rail-item[data-active="true"] .rail-dot { background: var(--jade); height: 4rem; }
   .rail-item[data-active="true"] .rail-glyph { color: var(--jade); }
 
+  /* portrait plate — photo mounted like a print, with a thin jade rule */
+  .portrait { position: relative; background: var(--ink-2); box-shadow: var(--shadow-plate); padding: 0.6rem; }
+  .portrait::after { content: ""; position: absolute; inset: 0; pointer-events: none; outline: 1px solid var(--border); outline-offset: -0.6rem; }
+  .portrait img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; filter: saturate(.85) contrast(1.04); }
+  @media (hover: hover) {
+    .portrait img { transition: filter .8s var(--ease-ink); }
+    .portrait:hover img { filter: saturate(1) contrast(1.02); }
+  }
+
   /* seal */
   .seal { display: inline-grid; place-items: center; background: var(--seal); color: var(--paper);
     font-family: var(--font-brush); line-height: 1; border-radius: 3px; box-shadow: inset 0 0 0 2px oklch(1 0 0 / .12); }

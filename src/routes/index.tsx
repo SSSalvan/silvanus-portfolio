@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import heroImg from "@/assets/hero-mountains.jpg";
 import dragonImg from "@/assets/ink-dragon.jpg";
+import profileImg from "@/assets/profile.jpg";
 import {
   categories,
   contact,
@@ -378,6 +379,10 @@ function About() {
             <p className="reveal">Outside research, I've built web and mobile apps, automated repetitive work with Python, and published two papers in 2026. I'm looking for teams where careful experiments and practical engineering help each other.</p>
           </div>
           <dl className="reveal self-start border-t border-border" style={{ "--d": "150ms" } as CSSProperties}>
+            <figure className="reveal portrait mb-8" style={{ "--d": "80ms" } as CSSProperties}>
+              <img src={profileImg} alt="Portrait of Silvanus Alvan" width={1200} height={1200} loading="lazy" />
+              <figcaption className="label mt-3 px-1 text-muted-foreground">Silvanus Alvan — Tangerang, Indonesia</figcaption>
+            </figure>
             {[
               ["Education", "Universitas Pelita Harapan", "B.CompSc, Data Science"],
               ["Academic record", "3.71 / 4.00", "Cumulative GPA"],

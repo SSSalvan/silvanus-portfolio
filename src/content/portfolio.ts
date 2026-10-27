@@ -1,5 +1,5 @@
 // Single source of truth for portfolio content (carried over verbatim from the original site).
-export type Category = "ml" | "product" | "games" | "personal";
+export type Category = "ml" | "product" | "games";
 
 export interface Project {
   title: string;
@@ -23,7 +23,6 @@ export const categories: { id: "all" | Category; label: string; glyph: string }[
   { id: "ml", label: "ML & research", glyph: "識" },
   { id: "product", label: "Products", glyph: "器" },
   { id: "games", label: "Games & graphics", glyph: "戲" },
-  { id: "personal", label: "Personal & ops", glyph: "己" },
 ];
 
 export const glyphFor = (c: Category) => categories.find((x) => x.id === c)!.glyph;
@@ -38,11 +37,11 @@ export const projects: Project[] = [
   { featured: true, cat: "product", kicker: "Product, ERP", title: "Management Apps", desc: "Flagship B2B ERP for livestock feed distribution at PT. Mitra Cerah Cemerlang: Flutter, Firebase, a Windows desktop build and PDF printing. In daily use.", tags: ["Flutter", "Dart", "Firebase"], repo: "https://github.com/SSSalvan/ManagemenApplication_V1" },
   { featured: true, cat: "product", kicker: "Product, Campus event", title: "MAN Voting", desc: "The voting app for UPH Festival Awards: Next.js App Router, Tailwind v4 and Framer Motion, built for a live campus event.", tags: ["Next.js", "Tailwind", "Framer Motion"] },
   { featured: true, cat: "product", kicker: "Product, Web client", title: "OutfitSync Web", desc: "React and TypeScript client for OutfitSync, built with a team: wardrobe composition, outfit sync and account flows.", tags: ["React", "TypeScript", "REST"], repo: "https://github.com/hyoonmod/OutfitSync_Web" },
-  { featured: true, cat: "product", kicker: "Product, Android", title: "OutfitSync Android", desc: "Kotlin and Jetpack Compose client: dashboard, outfit sync and camera capture in one Android app.", tags: ["Kotlin", "Compose", "Android"], repo: "https://github.com/TirtaSimangunsong/OutfitSync" },
+  { featured: true, cat: "games", kicker: "Games, Java Swing", title: "KeytoHatch", desc: "A typing game in Java Swing with three difficulty modes, a menu and a survival run, artwork included.", tags: ["Java", "Swing", "Game"] },
 
   // Archive (rest)
+  { cat: "product", kicker: "Product, Android", title: "OutfitSync Android", desc: "Kotlin and Jetpack Compose client: dashboard, outfit sync and camera capture in one Android app.", tags: ["Kotlin", "Compose", "Android"], repo: "https://github.com/TirtaSimangunsong/OutfitSync" },
   { cat: "games", kicker: "Graphics, Coursework", title: "Monopoly Game", desc: "Computer-graphics coursework: a Monopoly-style board rendered in WebGL with three.js and a .glb asset set.", tags: ["WebGL", "three.js", "C++"], repo: "https://github.com/Legocrocs/CumGraphics" },
-  { cat: "games", kicker: "Games, Java Swing", title: "KeytoHatch", desc: "A typing game in Java Swing with three difficulty modes, a menu and a survival run, artwork included.", tags: ["Java", "Swing", "Game"] },
   { cat: "product", kicker: "Product, Finance dashboard", title: "Fintrack", desc: "A local-first personal finance dashboard for tracking income, expenses, budgets, savings, and net worth.", tags: ["Next.js", "React", "Prisma"], repo: "https://github.com/SSSalvan/finance-dashboard" },
   { cat: "product", kicker: "Product, Inventory system", title: "Stockflow", desc: "An inventory and item-management system with supplier, transaction, reporting, and user-management workflows.", tags: ["React", "TypeScript", "Tailwind"], repo: "https://github.com/SSSalvan/item-management-system" },
   { cat: "product", kicker: "Blockchain, Supply chain", title: "Web3 Supply Chain", desc: "Decentralised product-lifecycle tracking: Solidity contracts record every hand-off, and a React dashboard reads the chain back.", tags: ["Solidity", "Web3", "React"], repo: "https://github.com/SSSalvan/Web3-Supply-Chain-Tracking" },
@@ -55,10 +54,6 @@ export const projects: Project[] = [
   { cat: "ml", kicker: "Computer vision, Tracking", title: "RoadLineDetectionResearch", desc: "A CNN + GRU hybrid that tracks lane lines in real time, documented with a full architecture write-up in the README.", tags: ["TensorFlow", "Keras", "OpenCV"], repo: "https://github.com/SSSalvan/RoadLineDetectionResearch" },
   { cat: "ml", kicker: "Bioinformatics, Algorithms", title: "PFAC Motif Detection", desc: "Parallel failure-less Aho-Corasick motif search over sequence data under biological constraints, with twenty benchmark runs kept beside the source.", tags: ["Python", "PFAC", "Sequences"], repo: "https://github.com/SSSalvan/PFAC-Motif-Detection-for-Biological-Constraints" },
   { cat: "product", kicker: "Product, Vision system", title: "PKM Gereja", desc: "Church management system: FastAPI backend, React front end and a YOLOv8n + ByteTrack pipeline that records attendance straight from camera video.", tags: ["YOLOv8", "ByteTrack", "FastAPI"] },
-  { cat: "personal", kicker: "Algorithms, Coursework", title: "Final Project DAA", desc: "Design and Analysis of Algorithms capstone: shortest-path search with Dijkstra, visualised over a real graph.", tags: ["Python", "Java", "Dijkstra"], repo: "https://github.com/Expellar/Final-Project-DAA" },
-  { cat: "personal", kicker: "Tooling, Client work", title: "Dekostel Pipeline", desc: "Client data pipeline: five iterations of an OCR tool, an uploader, and Python fix scripts for a 1,488-photo property catalogue.", tags: ["PowerShell", "Node.js", "Python"] },
-  { cat: "personal", kicker: "Personal, The site itself", title: "Portfolio Site", desc: "The page you are reading, rebuilt as an ink-and-mist field guide for research and making.", tags: ["React", "TanStack Start", "CSS"] },
-  { cat: "personal", kicker: "GitHub, Profile", title: "SSSalvan Profile", desc: "The GitHub profile that carries the research record: publications, coursework and a 3.71 GPA, all kept in Markdown.", tags: ["Markdown", "GitHub"], repo: "https://github.com/SSSalvan/SSSalvan" },
 ];
 
 // Captures and films carried over from the original portfolio archive.
@@ -86,10 +81,6 @@ export const projectMedia: Record<string, ProjectMedia> = {
   "Java 2D Arcade Games": { image: "/projects/java-2d-arcade-games/shot-1.webp" },
   "Monopoly Game": { image: "/projects/cumgraphics-monopoly/show.png" },
   "KeytoHatch": { image: "/projects/keytohatch/show.png" },
-  "Final Project DAA": { image: "/projects/final-project-daa-dijkstra/shot-1.webp" },
-  "Dekostel Pipeline": { image: "/projects/dekostel-tokoku-pipeline/shot-1.webp" },
-  "Portfolio Site": { image: "/projects/portfolio-site-live/shot-1.webp", film: "/projects/portfolio-site-live/brag.mp4", poster: "/projects/portfolio-site-live/brag.jpg" },
-  "SSSalvan Profile": { image: "/projects/sssalvan-profile-repo/shot-1.webp", film: "/projects/sssalvan-profile-repo/brag.mp4", poster: "/projects/sssalvan-profile-repo/brag.jpg" },
 };
 
 export const publications = [
