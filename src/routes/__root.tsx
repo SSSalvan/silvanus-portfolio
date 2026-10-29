@@ -91,8 +91,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@400&family=Ma+Shan+Zheng&display=swap",
+        // Preloaded, not render-blocking: fontScript below flips it to a stylesheet once
+        // the bytes have arrived, so first paint never waits on Google Fonts (126 KB CSS).
+        rel: "preload",
+        as: "style",
+        href: fontCss,
       },
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
@@ -104,6 +107,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+const fontCss =
+  "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Hanken+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@400&family=Ma+Shan+Zheng&display=swap";
+
+// Applies the preloaded font CSS without having blocked first paint on it. Re-checks for
+// ~10s because hydration can re-insert the link, which would drop a one-shot load listener.
+const fontScript = `(function(){var n=0;var t=setInterval(function(){var l=document.querySelector('link[rel="preload"][as="style"][href*="fonts.googleapis.com"]');if(l){l.rel='stylesheet';l.removeAttribute('as');}if(++n>50)clearInterval(t);},200);})();`;
+
 // Decides before first paint whether the once-per-session blade intro plays (no flash).
 const introScript = `(function(){try{if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;if(!/[?&]intro\\b/.test(location.search)&&sessionStorage.getItem('slash-seen')==='1')return;document.documentElement.classList.add('slash-on');}catch(e){}})();`;
 
@@ -112,6 +122,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: fontScript }} />
         <script dangerouslySetInnerHTML={{ __html: introScript }} />
       </head>
       <body className="grain">

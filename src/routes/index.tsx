@@ -8,7 +8,6 @@ import {
   contact,
   experience,
   filterProjects,
-  glyphFor,
   projects,
   projectMedia,
   publications,
@@ -80,9 +79,9 @@ function Intro() {
     const markSeen = () => { try { sessionStorage.setItem("slash-seen", "1"); } catch { /* private mode */ } };
     const reveal = () => { if (revealed) return; revealed = true; window.dispatchEvent(new Event("intro:done")); };
     const finish = () => { root.classList.remove("slash-on"); root.classList.remove("dragon-on"); markSeen(); reveal(); };
-    const openT = window.setTimeout(() => root.classList.remove("slash-on"), 2250);
-    const revealT = window.setTimeout(reveal, 2750);
-    const restT = window.setTimeout(finish, 3150);
+    const openT = window.setTimeout(() => root.classList.remove("slash-on"), 1700);
+    const revealT = window.setTimeout(reveal, 2150);
+    const restT = window.setTimeout(finish, 2650);
     const skip = () => { [openT, revealT, restT].forEach((id) => window.clearTimeout(id)); finish(); };
     window.addEventListener("keydown", skip, { once: true });
     window.addEventListener("pointerdown", skip, { once: true });
@@ -188,7 +187,7 @@ function Hero() {
   return (
     <section id="top" className={`relative flex min-h-[100svh] flex-col overflow-hidden ${ready ? "hero-ready" : ""}`}>
       <div ref={imgRef} className="absolute inset-0 will-change-transform" style={{ transform: "scale(1.08)" }}>
-        <img src={heroImg} alt="" width={1920} height={1088} className={`h-full w-full object-cover object-[70%_center] transition-opacity duration-[2500ms] ${ready ? "opacity-90" : "opacity-0"}`} />
+        <img src={heroImg} alt="" width={1920} height={1088} className={`h-full w-full object-cover object-[70%_center] transition-opacity duration-[1200ms] ${ready ? "opacity-90" : "opacity-0"}`} />
       </div>
       <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background to-transparent" />
@@ -212,7 +211,7 @@ function Hero() {
           <path d="M2 14 C 80 4, 160 18, 240 9 S 360 6, 398 11" pathLength={1} stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
         </svg>
 
-        <div className={`mt-10 grid gap-10 transition-all duration-[1400ms] md:grid-cols-[1.2fr_1fr] ${ready ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`} style={{ transitionDelay: "500ms" }}>
+        <div className={`mt-10 grid gap-10 transition-all duration-[900ms] md:grid-cols-[1.2fr_1fr] ${ready ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`} style={{ transitionDelay: "300ms" }}>
           <div>
             <p className="max-w-md text-lg leading-relaxed text-muted-foreground">
               I'm <span className="text-foreground">Silvanus</span>. I work on computer vision and language models, and I turn research into software people can use.
@@ -354,10 +353,8 @@ function Work() {
             {featured.map((p, i) => (
               <article key={p.title} className={`reveal plate project-feature flex min-h-[26rem] flex-col justify-between overflow-hidden p-7 md:p-10 ${i === 0 ? "md:col-span-2 md:min-h-[32rem]" : ""}`} style={{ "--d": `${(i % 2) * 120}ms` } as CSSProperties}>
                 {showProjectMedia && projectMedia[p.title] && <img className="project-image" src={projectMedia[p.title].image} alt={`${p.title} project capture`} loading={i === 0 ? "eager" : "lazy"} />}
-                <span className="plate-glyph" aria-hidden="true">{glyphFor(p.cat)}</span>
                 <div className="flex items-start justify-between">
                   <span className="label text-jade">{num(p.title)} · {p.kicker}</span>
-                  <span className="seal h-7 w-7 text-xs" aria-hidden="true">{glyphFor(p.cat)}</span>
                 </div>
                 <div className="relative max-w-2xl">
                   <h3 className={`display mb-5 ${i === 0 ? "text-[clamp(3rem,7vw,6.5rem)]" : "text-[clamp(2.4rem,4vw,3.8rem)]"}`}>{p.title}</h3>

@@ -115,10 +115,11 @@
   .hairline { height: 1px; background: var(--color-border); }
 
   /* reveal */
-  .reveal { opacity: 0; transform: translateY(28px); filter: blur(6px);
-    transition: opacity 1.1s var(--ease-ink), transform 1.1s var(--ease-ink), filter 1.1s var(--ease-ink); transition-delay: var(--d, 0ms); }
-  .reveal[data-in="true"] { opacity: 1; transform: none; filter: none; }
-  .no-js .reveal { opacity: 1; transform: none; filter: none; }
+  /* opacity + transform only: animating `filter` repaints every element as it scrolls in */
+  .reveal { opacity: 0; transform: translateY(28px);
+    transition: opacity 1.1s var(--ease-ink), transform 1.1s var(--ease-ink); transition-delay: var(--d, 0ms); }
+  .reveal[data-in="true"] { opacity: 1; transform: none; }
+  .no-js .reveal { opacity: 1; transform: none; }
 
   /* ink-wipe heading lines */
   .line-mask { display: block; overflow: hidden; padding-bottom: 0.08em; }
@@ -164,12 +165,8 @@
   .plate { position: relative; overflow: hidden; background: var(--ink-2); box-shadow: var(--shadow-plate); isolation: isolate; }
   .plate::before { content: ""; position: absolute; inset: 0; background: var(--gradient-mist); z-index: -1; transition: transform 1.4s var(--ease-ink); }
   .plate:hover::before { transform: scale(1.3) translateX(10%); }
-  /* the brush word is a corner mark, top left of the card, and it alone is translucent */
-  .plate-glyph { position: absolute; left: -0.05em; top: -0.16em; z-index: 1; font-family: var(--font-brush); line-height: 1;
-    font-size: clamp(4.5rem, 6vw, 6.5rem); color: var(--foreground); opacity: .22; transition: opacity 1s var(--ease-ink), transform 1.4s var(--ease-ink); }
-  .plate:hover .plate-glyph { opacity: .34; transform: translateY(6%) rotate(-3deg); }
-  /* copy sits above the scrim; the brush word keeps its own absolute spot at the top left */
-  .project-feature > :not(.project-image):not(.plate-glyph) { position: relative; z-index: 1; }
+  /* copy sits above the scrim */
+  .project-feature > :not(.project-image) { position: relative; z-index: 1; }
   .project-image { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; opacity: 1; filter: saturate(.95) contrast(1.05); transition: transform 1.2s var(--ease-ink); }
   /* ink only where the copy lives: top-left corner, bottom band, left column */
   .project-feature::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
@@ -261,7 +258,7 @@
     .dragon-descent { --dragon-op: .55; right: -4%; width: min(54vw, 44rem); }
   }
   html.dragon-on .dragon-fall { will-change: transform, opacity;
-    animation: dragon-drop 1.25s var(--ease-ink) 1.85s both; }
+    animation: dragon-drop 1.15s var(--ease-ink) 1.4s both; }
   @keyframes dragon-drop {
     from { opacity: 0; transform: translate3d(0, -105%, 0); }
     to { opacity: 1; transform: none; }
@@ -272,14 +269,14 @@
   html.slash-on .slash-intro { display: block; position: fixed; inset: 0; z-index: 100; pointer-events: none; }
   html.slash-on body { overflow: hidden; }
   .slash-half { position: absolute; left: 0; right: 0; height: 50.5%; background: var(--background); }
-  .slash-half.up { top: 0; animation: slash-up 1.1s var(--ease-blade) 1.05s forwards; }
-  .slash-half.down { bottom: 0; animation: slash-down 1.1s var(--ease-blade) 1.05s forwards; }
+  .slash-half.up { top: 0; animation: slash-up 1.1s var(--ease-blade) .5s forwards; }
+  .slash-half.down { bottom: 0; animation: slash-down 1.1s var(--ease-blade) .5s forwards; }
   .slash-cut { position: absolute; top: 50%; left: 0; height: 1px; width: 100%; background: var(--jade);
     box-shadow: 0 0 24px 2px var(--jade); transform-origin: left; transform: scaleX(0);
-    animation: slash-cut .55s var(--ease-blade) .45s forwards, fade-out .5s ease 1.1s forwards; }
+    animation: slash-cut .55s var(--ease-blade) .25s forwards, fade-out .5s ease .7s forwards; }
   .slash-word { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-brush);
     font-size: clamp(4rem, 12vw, 9rem); color: var(--foreground); opacity: 0;
-    animation: word-in .6s var(--ease-ink) forwards, fade-out .3s ease .9s forwards; }
+    animation: word-in .6s var(--ease-ink) forwards, fade-out .3s ease .6s forwards; }
   @keyframes slash-cut { to { transform: scaleX(1); } }
   @keyframes slash-up { to { transform: translateY(-101%) rotate(-1deg); } }
   @keyframes slash-down { to { transform: translateY(101%) rotate(-1deg); } }

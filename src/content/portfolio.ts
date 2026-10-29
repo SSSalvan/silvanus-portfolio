@@ -104,7 +104,7 @@ export const publications = [
 ];
 
 export const experience = [
-  { when: "Jun 2026 to Present", org: "Dekostel Management", role: "Data Entry & User Testing", desc: "Built Python scripts and browser automation workflows to reduce repetitive manual entry; tested automated systems and validated data integrity." },
+  { when: "June 2026 - Ongoing", org: "Dekostel Management", role: "Data Entry", desc: "Managed high-volume project data entry and administrative documentation remotely, while designing custom Python scripts and Automa browser automation workflows to streamline repetitive manual entry." },
   { when: "Jun 2022 to Aug 2024", org: "PT Karya Satria", role: "Office Administrator", desc: "Managed proposals, work orders, procurement, and project budgets full-time through June 2023, then continued part-time until August 2024." },
 ];
 
